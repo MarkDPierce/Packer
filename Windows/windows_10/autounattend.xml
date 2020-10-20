@@ -84,7 +84,10 @@
                 <AcceptEula>true</AcceptEula>
                 <FullName>packer</FullName>
                 <Organization>packer</Organization>
-                <ProductKey>2FMYP-QCY43-QR9VK-WTVCK
+                <ProductKey>
+                    <!-- Product Key from https://www.microsoft.com/de-de/evalcenter/evaluate-windows-server-technical-preview?i=1 -->
+                    <!-- FILL ME IN WIL SOMETHING OTHWISE WE GO STRAIGHT TO TRIAL -->
+                    <!-- <key>11111-22222-33333-44444-55555</key> -->
                     <WillShowUI>Never</WillShowUI>
                 </ProductKey>
             </UserData>
@@ -99,7 +102,7 @@
                     <InstallFrom>
                         <MetaData wcm:action="add">
                             <Key>/IMAGE/NAME</Key>
-                            <Value>Windows 10 Enterprise</Value>
+                            <Value>Windows 10 Pro</Value>
                         </MetaData>
                     </InstallFrom>
                 </OSImage>
@@ -188,6 +191,11 @@
                     <CommandLine>cmd.exe /c C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -File a:\FLOPPY\Windows-Bootstrap.ps1</CommandLine>
                     <Order>5</Order>
                     <Description>Set Temp Folders</Description>
+                </SynchronousCommand>
+                <SynchronousCommand wcm:action="add">
+                    <CommandLine>cmd.exe /c a:\FLOPPY\install-vm-tools.cmd</CommandLine>
+                    <Order>6</Order>
+                    <Description>Install VMware Tools</Description>
                 </SynchronousCommand>
                 <SynchronousCommand wcm:action="add">
                     <CommandLine>cmd.exe /c C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -File a:\FLOPPY\enable-winrm.ps1</CommandLine>

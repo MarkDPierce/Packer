@@ -9,7 +9,7 @@ variable "build_directory"{
 
 variable "boot_wait"{
     type    = string
-    default = "60s"
+    default = "3s"
 }
 
 variable "communicator"{
@@ -108,6 +108,11 @@ variable "vsphere_server"{
     default = "localhost"
 }
 
+variable "firmware"{
+    type    = string
+    default = "bios"
+}
+
 source "vsphere-iso" "server2016"{
     boot_wait             = var.boot_wait
     CPUs                  = var.cpu
@@ -118,6 +123,7 @@ source "vsphere-iso" "server2016"{
     winrm_username        = "packer"
     winrm_password        = "packer"
     winrm_timeout         = "2h"
+    firmware              = var.firmware
     shutdown_command      = var.windows_shutdown_command
     create_snapshot       = var.enable_snapshot
     convert_to_template   = var.convert_to_template
@@ -128,16 +134,21 @@ source "vsphere-iso" "server2016"{
         disk_size             = var.disk_size
         disk_thin_provisioned = true
     }
-    firmware              = "efi"
-    floppy_dirs           = [ "./floppy"]
-    floppy_files          = [ "./server_2016/autounattend.xml" ]
+    floppy_files          = [ 
+        "./server_2016/autounattend.xml",
+        "./floppy/disable-network-discovery.cmd",
+        "./floppy/disable-screensaver.ps1",
+        "./floppy/disable-winrm.ps1",
+        "./floppy/enable-winrm.ps1",
+        "./floppy/Server-Bootstrap.ps1",
+        "./floppy/install-vm-tools.cmd"
+    ]
     folder                = var.vsphere_folder
     guest_os_type         = "windows9Server64Guest"
     insecure_connection   = "true"
     iso_paths             = [
         var.vsphere_iso,
-        "[] /vmimages/tools-isoimages/windows.iso"
-        ]
+        "[] /vmimages/tools-isoimages/windows.iso"]
     network_adapters  {
         network               = var.vsphere_network
         network_card          = "vmxnet3"
@@ -158,7 +169,14 @@ source "hyperv-iso" "server2016"{
     enable_secure_boot                  = true
     enable_virtualization_extensions    = false
     floppy_dirs                         = [ "./floppy"]
-    floppy_files                        = [ "./server_2016/autounattend.xml" ]
+        floppy_files          = [ 
+        "./server_2016/autounattend.xml",
+        "./floppy/disable-network-discovery.cmd",
+        "./floppy/disable-screensaver.ps1",
+        "./floppy/disable-winrm.ps1",
+        "./floppy/enable-winrm.ps1",
+        "./floppy/Server-Bootstrap.ps1"
+    ]
     guest_additions_mode                = "disable"
     iso_checksum                        = var.iso_check
     iso_url                             = var.iso_dir

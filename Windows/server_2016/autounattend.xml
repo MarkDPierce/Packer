@@ -61,10 +61,10 @@
                 </OSImage>
             </ImageInstall>
             <UserData>
-                <!-- Product Key from https://www.microsoft.com/de-de/evalcenter/evaluate-windows-server-technical-preview?i=1 -->
-
                 <ProductKey>
-                    <Key>WC2BQ-8NRM3-FDDYY-2BFGV-KHKQY</Key>
+                    <!-- Product Key from https://www.microsoft.com/de-de/evalcenter/evaluate-windows-server-technical-preview?i=1 -->
+                    <!-- FILL ME IN WIL SOMETHING OTHWISE WE GO STRAIGHT TO TRIAL -->
+                    <!-- <key>11111-22222-33333-44444-55555</key> -->
                     <WillShowUI>OnError</WillShowUI>
                 </ProductKey>
                 <AcceptEula>true</AcceptEula>
@@ -97,7 +97,7 @@
                 <RunSynchronousCommand wcm:action="add">
                     <Order>1</Order>
                     <Description>Disable Network Discovery</Description>
-                    <Path>cmd.exe /c a:\FLOPPY\disable-network-discovery.cmd</Path>
+                    <Path>cmd.exe /c a:\disable-network-discovery.cmd</Path>
                 </RunSynchronousCommand>
             </RunSynchronous>
         </component>
@@ -132,17 +132,22 @@
                     <Description>Disable password expiration for packer user</Description>
                 </SynchronousCommand>
                 <SynchronousCommand wcm:action="add">
-                    <CommandLine>cmd.exe /c C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -File a:\FLOPPY\disable-winrm.ps1</CommandLine>
+                    <CommandLine>cmd.exe /c C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -File a:\disable-winrm.ps1</CommandLine>
                     <Order>4</Order>
                     <Description>Disable PSR</Description>
                 </SynchronousCommand>
                 <SynchronousCommand wcm:action="add">
-                    <CommandLine>cmd.exe /c C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -File a:\FLOPPY\Windows-Bootstrap.ps1</CommandLine>
+                    <CommandLine>cmd.exe /c C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -File a:\Windows-Bootstrap.ps1</CommandLine>
                     <Order>5</Order>
                     <Description>Set Temp Folders</Description>
                 </SynchronousCommand>
                 <SynchronousCommand wcm:action="add">
-                    <CommandLine>cmd.exe /c C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -File a:\FLOPPY\enable-winrm.ps1</CommandLine>
+                    <CommandLine>cmd.exe /c a:\install-vm-tools.cmd</CommandLine>
+                    <Order>6</Order>
+                    <Description>Install VMware Tools</Description>
+                </SynchronousCommand>
+                <SynchronousCommand wcm:action="add">
+                    <CommandLine>cmd.exe /c C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -File a:\enable-winrm.ps1</CommandLine>
                     <Order>99</Order>
                     <Description>Enable PSR</Description>
                 </SynchronousCommand>

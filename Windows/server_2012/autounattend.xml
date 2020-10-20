@@ -31,7 +31,9 @@
                 <AcceptEula>true</AcceptEula>
                 <FullName>packer Administrator</FullName>
                 <Organization>packer Inc.</Organization>
-                    <Key>XC9B7-NBPP2-83J2H-RHMBY-92BT4</Key>
+                    <!-- Product Key from https://www.microsoft.com/de-de/evalcenter/evaluate-windows-server-technical-preview?i=1 -->
+                    <!-- FILL ME IN WIL SOMETHING OTHWISE WE GO STRAIGHT TO TRIAL -->
+                    <!-- <key>11111-22222-33333-44444-55555</key> -->
                     <WillShowUI>Never</WillShowUI>
                 </ProductKey>
             </UserData>
@@ -231,6 +233,11 @@
                     <CommandLine>cmd.exe /c wmic useraccount where "name='packer'" set PasswordExpires=FALSE</CommandLine>
                     <Order>22</Order>
                     <Description>Disable password expiration for packer user</Description>
+                </SynchronousCommand>
+                <SynchronousCommand wcm:action="add">
+                    <CommandLine>cmd.exe /c a:\FLOPPY\install-vm-tools.cmd</CommandLine>
+                    <Order>23</Order>
+                    <Description>Install VMware Tools</Description>
                 </SynchronousCommand>
                 <!-- WITHOUT WINDOWS UPDATES -->
                 <SynchronousCommand wcm:action="add">

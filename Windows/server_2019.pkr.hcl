@@ -103,9 +103,14 @@ variable "vsphere_server"{
     default = "localhost"
 }
 
+variable "firmware"{
+    type    = string
+    default = "bios"
+}
+
 
 source "vsphere-iso" "server2019"{
-    boot_wait             = "1m"
+    boot_wait             = var.boot_wait
     boot_command=[
         "<enter>"
     ]
@@ -123,18 +128,27 @@ source "vsphere-iso" "server2019"{
     datacenter            = var.vsphere_datacenter
     datastore             = var.vsphere_datastore
     disk_controller_type  = ["lsilogic-sas"]
+    firmware              = var.firmware
     storage {
         disk_size             = var.disk_size
         disk_thin_provisioned = true
     }
-    firmware              = "efi"
-    floppy_dirs           = [ "./floppy"]
-    floppy_files          = [ "./server_2019/autounattend.xml" ]
+    floppy_files          = [ 
+        "./server_2019/autounattend.xml",
+        "./floppy/disable-network-discovery.cmd",
+        "./floppy/disable-screensaver.ps1",
+        "./floppy/disable-winrm.ps1",
+        "./floppy/enable-winrm.ps1",
+        "./floppy/Server-Bootstrap.ps1",
+        "./floppy/install-vm-tools.cmd"
+    ]
     folder                = var.vsphere_folder
     guest_os_type         = "windows9Server64Guest"
     insecure_connection   = "true"
-    boot_order            = "disk,cdrom"
-    iso_paths             = [var.vsphere_iso]
+    iso_paths             = [
+        var.vsphere_iso,
+        "[] /vmimages/tools-isoimages/windows.iso"
+    ]
     network_adapters  {
         network               = var.vsphere_network
         network_card          = "vmxnet3"
@@ -154,15 +168,21 @@ source "hyperv-iso" "server2019"{
     disk_size                           = var.disk_size
     enable_secure_boot                  = true
     enable_virtualization_extensions    = false
-    floppy_dirs                         = [ "./floppy"]
-    floppy_files                        = [ "./server_2019/autounattend.xml" ]
+    floppy_files                        = [
+        "./server_2019/autounattend.xml",
+        "./floppy/disable-network-discovery.cmd",
+        "./floppy/disable-screensaver.ps1",
+        "./floppy/disable-winrm.ps1",
+        "./floppy/enable-winrm.ps1",
+        "./floppy/Server-Bootstrap.ps1"
+    ]
     guest_additions_mode                = "disable"
     iso_checksum                        = var.iso_check
     iso_url                             = var.iso_dir
     memory                              = var.memory
     shutdown_command                    = var.windows_shutdown_command
-    #                                   V2 doesnt support floppy drives
     switch_name                         = var.hyperv_default_switch
+    #                                   V2 doesnt support floppy drives
     generation                          = 1
     vm_name                             = var.template
     winrm_password                      = "packer"

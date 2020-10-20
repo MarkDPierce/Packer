@@ -9,7 +9,7 @@ variable "build_directory"{
 
 variable "boot_wait"{
     type    = string
-    default = "60s"
+    default = "5s"
 }
 
 variable "communicator"{
@@ -123,6 +123,11 @@ variable "vsphere_server"{
     default = "localhost"
 }
 
+variable "firmware"{
+    type    = string
+    default = "bios"
+}
+
 source "vsphere-iso" "server2012" {
     boot_wait             = var.boot_wait
     CPUs                  = var.cpu
@@ -133,6 +138,7 @@ source "vsphere-iso" "server2012" {
     winrm_username        = "packer"
     winrm_password        = "packer"
     winrm_timeout         = "2h"
+    firmware              = var.firmware
     shutdown_command      = var.windows_shutdown_command
     create_snapshot       = var.enable_snapshot
     convert_to_template   = var.convert_to_template
@@ -143,16 +149,21 @@ source "vsphere-iso" "server2012" {
         disk_size             = var.disk_size
         disk_thin_provisioned = true
     }
-    firmware              = "efi"
-    floppy_dirs           = [ "./floppy"]
-    floppy_files          = [ "./server_2012/autounattend.xml" ]
+    floppy_files          = [ 
+        "./server_2016/autounattend.xml",
+        "./floppy/disable-network-discovery.cmd",
+        "./floppy/disable-screensaver.ps1",
+        "./floppy/disable-winrm.ps1",
+        "./floppy/enable-winrm.ps1",
+        "./floppy/Server-Bootstrap.ps1",
+        "./floppy/install-vm-tools.cmd"
+    ]
     folder                = var.vsphere_folder
     guest_os_type         = "windows9Server64Guest"
     insecure_connection   = "true"
     iso_paths             = [
         var.vsphere_iso,
-        "[] /vmimages/tools-isoimages/windows.iso"
-        ]
+        "[] /vmimages/tools-isoimages/windows.iso"]
     network_adapters  {
         network               = var.vsphere_network
         network_card          = "vmxnet3"
@@ -180,6 +191,7 @@ source "vsphere-iso" "server2012r2" {
     shutdown_command      = var.windows_shutdown_command
     create_snapshot       = var.enable_snapshot
     convert_to_template   = var.convert_to_template
+    firmware              = var.firmware
     datacenter            = var.vsphere_datacenter
     datastore             = var.vsphere_datastore
     disk_controller_type  = ["lsilogic-sas"]
@@ -187,9 +199,15 @@ source "vsphere-iso" "server2012r2" {
         disk_size             = var.disk_size
         disk_thin_provisioned = true
     }
-    firmware              = "efi"
-    floppy_dirs           = [ "./floppy"]
-    floppy_files          = [ "./server_2012R2/autounattend.xml" ]
+    floppy_files          = [ 
+        "./server_2012R2/autounattend.xml",
+        "./floppy/disable-network-discovery.cmd",
+        "./floppy/disable-screensaver.ps1",
+        "./floppy/disable-winrm.ps1",
+        "./floppy/enable-winrm.ps1",
+        "./floppy/Server-Bootstrap.ps1",
+        "./floppy/install-vm-tools.cmd"
+    ]
     folder                = var.vsphere_folder
     guest_os_type         = "windows9Server64Guest"
     insecure_connection   = "true"

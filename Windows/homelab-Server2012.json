@@ -1,7 +1,7 @@
 {
     "template"                  : "Server-2012",
     "build_directory"           : "../builds",
-    "boot_wait"                 : "60s",
+    "boot_wait"                 : "3s",
     "communicator"              : "winrm",
     "cpu"                       : 1,
     "memory"                    : 2048,

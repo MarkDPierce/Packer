@@ -137,6 +137,11 @@ variable "vsphere_server"{
     default = "localhost"
 }
 
+variable "firmware"{
+    type    = string
+    default = "bios"
+}
+
 
 source "vsphere-iso" "windows10_1703"{
     boot_wait             = var.boot_wait
@@ -161,9 +166,17 @@ source "vsphere-iso" "windows10_1703"{
         disk_size             = var.disk_size
         disk_thin_provisioned = true
     }
-    firmware              = "efi"
+    firmware              = var.firmware
     floppy_dirs           = [ "./floppy"]
-    floppy_files          = [ "./windows_10/autounattend.xml" ]
+    floppy_files          = [
+        "./windows_10/autounattend.xml",
+        "./floppy/disable-network-discovery.cmd",
+        "./floppy/disable-screensaver.ps1",
+        "./floppy/disable-winrm.ps1",
+        "./floppy/enable-winrm.ps1",
+        "./floppy/Server-Bootstrap.ps1",
+        "./floppy/install-vm-tools.cmd"
+    ]
     folder                = var.vsphere_folder
     guest_os_type         = "windows9Server64Guest"
     insecure_connection   = "true"
@@ -205,9 +218,17 @@ source "vsphere-iso" "windows10_1809"{
         disk_size             = var.disk_size
         disk_thin_provisioned = true
     }
-    firmware              = "efi"
+    firmware              = var.firmware
     floppy_dirs           = [ "./floppy"]
-    floppy_files          = [ "./windows_10/autounattend.xml" ]
+    floppy_files          = [ 
+        "./windows_10/autounattend.xml",
+        "./floppy/disable-network-discovery.cmd",
+        "./floppy/disable-screensaver.ps1",
+        "./floppy/disable-winrm.ps1",
+        "./floppy/enable-winrm.ps1",
+        "./floppy/Server-Bootstrap.ps1",
+        "./floppy/install-vm-tools.cmd"
+     ]
     folder                = var.vsphere_folder
     guest_os_type         = "windows9Server64Guest"
     insecure_connection   = "true"
@@ -249,9 +270,17 @@ source "vsphere-iso" "windows10_1903"{
         disk_size             = var.disk_size
         disk_thin_provisioned = true
     }
-    firmware              = "efi"
+    firmware              = var.firmware
     floppy_dirs           = [ "./floppy"]
-    floppy_files          = [ "./windows_10/autounattend.xml" ]
+    floppy_files          = [ 
+        "./windows_10/autounattend.xml",
+        "./floppy/disable-network-discovery.cmd",
+        "./floppy/disable-screensaver.ps1",
+        "./floppy/disable-winrm.ps1",
+        "./floppy/enable-winrm.ps1",
+        "./floppy/Server-Bootstrap.ps1",
+        "./floppy/install-vm-tools.cmd"
+     ]
     folder                = var.vsphere_folder
     guest_os_type         = "windows9Server64Guest"
     insecure_connection   = "true"
@@ -293,9 +322,17 @@ source "vsphere-iso" "windows10_1909"{
         disk_size             = var.disk_size
         disk_thin_provisioned = true
     }
-    firmware              = "efi"
+    firmware              = var.firmware
     floppy_dirs           = [ "./floppy"]
-    floppy_files          = [ "./windows_10/autounattend.xml" ]
+    floppy_files          = [ 
+        "./windows_10/autounattend.xml",
+        "./floppy/disable-network-discovery.cmd",
+        "./floppy/disable-screensaver.ps1",
+        "./floppy/disable-winrm.ps1",
+        "./floppy/enable-winrm.ps1",
+        "./floppy/Server-Bootstrap.ps1",
+        "./floppy/install-vm-tools.cmd"
+     ]
     folder                = var.vsphere_folder
     guest_os_type         = "windows9Server64Guest"
     insecure_connection   = "true"
@@ -323,14 +360,21 @@ source "hyperv-iso" "windows10_1703"{
     enable_secure_boot                  = true
     enable_virtualization_extensions    = false
     floppy_dirs                         = [ "./floppy"]
-    floppy_files                        = [ "./windows_10/autounattend.xml" ]
+    floppy_files                        = [ 
+        "./windows_10/autounattend.xml",
+        "./floppy/disable-network-discovery.cmd",
+        "./floppy/disable-screensaver.ps1",
+        "./floppy/disable-winrm.ps1",
+        "./floppy/enable-winrm.ps1",
+        "./floppy/Server-Bootstrap.ps1"
+     ]
     guest_additions_mode                = "disable"
     iso_checksum                        = var.checksum_1703
     iso_url                             = var.iso_1703
     memory                              = var.memory
     shutdown_command                    = var.windows_shutdown_command
-    #                                   V2 doesnt support floppy drives
     switch_name                         = var.hyperv_default_switch
+    #                                   V2 doesnt support floppy drives
     generation                          = 1
     vm_name                             = "${var.template}-1703"
     winrm_password                      = "packer"
@@ -349,14 +393,21 @@ source "hyperv-iso" "windows10_1809"{
     enable_secure_boot                  = true
     enable_virtualization_extensions    = false
     floppy_dirs                         = [ "./floppy"]
-    floppy_files                        = [ "./windows_10/autounattend.xml" ]
+    floppy_files                        = [ 
+        "./windows_10/autounattend.xml",
+        "./floppy/disable-network-discovery.cmd",
+        "./floppy/disable-screensaver.ps1",
+        "./floppy/disable-winrm.ps1",
+        "./floppy/enable-winrm.ps1",
+        "./floppy/Server-Bootstrap.ps1"
+     ]
     guest_additions_mode                = "disable"
     iso_checksum                        = var.checksum_1809
     iso_url                             = var.iso_1809
     memory                              = var.memory
     shutdown_command                    = var.windows_shutdown_command
-    #                                   V2 doesnt support floppy drives
     switch_name                         = var.hyperv_default_switch
+    #                                   V2 doesnt support floppy drives
     generation                          = 1
     vm_name                             = "${var.template}-1809"
     winrm_password                      = "packer"
@@ -375,14 +426,21 @@ source "hyperv-iso" "windows10_1903"{
     enable_secure_boot                  = true
     enable_virtualization_extensions    = false
     floppy_dirs                         = [ "./floppy"]
-    floppy_files                        = [ "./windows_10/autounattend.xml" ]
+    floppy_files                        = [ 
+        "./windows_10/autounattend.xml",
+        "./floppy/disable-network-discovery.cmd",
+        "./floppy/disable-screensaver.ps1",
+        "./floppy/disable-winrm.ps1",
+        "./floppy/enable-winrm.ps1",
+        "./floppy/Server-Bootstrap.ps1"
+     ]
     guest_additions_mode                = "disable"
     iso_checksum                        = var.checksum_1903
     iso_url                             = var.iso_1903
     memory                              = var.memory
     shutdown_command                    = var.windows_shutdown_command
-    #                                   V2 doesnt support floppy drives
     switch_name                         = var.hyperv_default_switch
+    #                                   V2 doesnt support floppy drives
     generation                          = 1
     vm_name                             = "${var.template}-1903"
     winrm_password                      = "packer"
@@ -401,14 +459,21 @@ source "hyperv-iso" "windows10_1909"{
     enable_secure_boot                  = true
     enable_virtualization_extensions    = false
     floppy_dirs                         = [ "./floppy"]
-    floppy_files                        = [ "./windows_10/autounattend.xml" ]
+    floppy_files                        = [ 
+        "./windows_10/autounattend.xml",
+        "./floppy/disable-network-discovery.cmd",
+        "./floppy/disable-screensaver.ps1",
+        "./floppy/disable-winrm.ps1",
+        "./floppy/enable-winrm.ps1",
+        "./floppy/Server-Bootstrap.ps1"
+     ]
     guest_additions_mode                = "disable"
     iso_checksum                        = var.checksum_1909
     iso_url                             = var.iso_1909
     memory                              = var.memory
     shutdown_command                    = var.windows_shutdown_command
-    #                                   V2 doesnt support floppy drives
     switch_name                         = var.hyperv_default_switch
+    #                                   V2 doesnt support floppy drives
     generation                          = 1
     vm_name                             = "${var.template}-1909"
     winrm_password                      = "packer"
