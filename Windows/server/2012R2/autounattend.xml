@@ -61,11 +61,9 @@
                 </OSImage>
             </ImageInstall>
             <UserData>
+                <!-- Product Key from http://technet.microsoft.com/en-us/library/jj612867.aspx -->
                 <ProductKey>
-                    <!-- Product Key from https://www.microsoft.com/de-de/evalcenter/evaluate-windows-server-technical-preview?i=1 -->
-                    <!-- FILL ME IN WIL SOMETHING OTHWISE WE GO STRAIGHT TO TRIAL -->
-                    <!-- <key>11111-22222-33333-44444-55555</key> -->
-                    <Key>D2N9P-3P6X9-2R39C-7RTCD-MDVJX</Key>
+                    <Key></Key>
                     <WillShowUI>OnError</WillShowUI>
                 </ProductKey>
                 <AcceptEula>true</AcceptEula>

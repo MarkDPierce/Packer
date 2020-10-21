@@ -1,0 +1,31 @@
+{
+    "template"                  : "Windows-10",
+    "windows_version"           : "1703",
+    "build_directory"           : "../builds",
+
+    "boot_wait"                 : "3s",
+    "communicator"              : "winrm",
+    "cpu"                       : 2,
+    "memory"                    : 2048,
+    "disk_size"                 : 120000,
+    "windows_shutdown_command"  : "shutdown -s -t 5",
+
+    "iso"                       : "C:\\packer\\en_windows_10_enterprise_version_1703_updated_march_2017_x64_dvd_10189290.iso",
+
+    "vsphere_iso"               : "[Software] ISO/Microsoft/Windows/ENG(English)/10/en_windows_10_multiple_editions_version_1703_updated_june_2017_x64_dvd_10725021.iso",
+    "checksum"                  : "SHA256:466C1CD1E7B9BCF3B984D5A41E24500D4945C0B71B2B6B446D68D26A9C0F2320",
+
+    "hyperv_default_switch"     : "Default Switch",
+
+    "enable_snapshot"           : false,
+    "convert_to_template"       : true,
+
+    "vsphere_cluster"           : "PLAY",
+    "vsphere_datacenter"        : "PLAY",
+    "vsphere_datastore"         : "PLAY-Storage02-41",
+    "vsphere_folder"            : "Mark/Templates/Windows/windows/10",
+    "vsphere_network"           : "VM Network",
+    "vsphere_password"          : "Security!123",
+    "vsphere_user"              : "svc_rebuild@play.loginvsi.com",
+    "vsphere_server"            : "PLAY-vcenter01.play.loginvsi.com"
+}
