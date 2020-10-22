@@ -85,9 +85,7 @@
                 <FullName>packer</FullName>
                 <Organization>packer</Organization>
                 <ProductKey>
-                    <!-- Product Key from https://www.microsoft.com/de-de/evalcenter/evaluate-windows-server-technical-preview?i=1 -->
-                    <!-- FILL ME IN WIL SOMETHING OTHWISE WE GO STRAIGHT TO TRIAL -->
-                    <!-- <key>11111-22222-33333-44444-55555</key> -->
+                    <key>JJJJC-3NX9G-YXTWB-GJYT3-9D73B</key>
                     <WillShowUI>Never</WillShowUI>
                 </ProductKey>
             </UserData>

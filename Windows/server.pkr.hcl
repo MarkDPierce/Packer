@@ -1,6 +1,6 @@
 variable "template"{
     type    = string
-    default = "Server-2019"
+    default = "Server"
 }
 variable "build_directory"{
     type    = string
@@ -108,8 +108,12 @@ variable "firmware"{
     default = "bios"
 }
 
+variable "server_version"{
+    type    = string
+    default = "2019"
+}
 
-source "vsphere-iso" "server2019"{
+source "vsphere-iso" "server"{
     boot_wait             = var.boot_wait
     boot_command=[
         "<enter>"
@@ -133,8 +137,8 @@ source "vsphere-iso" "server2019"{
         disk_size             = var.disk_size
         disk_thin_provisioned = true
     }
-    floppy_files          = [ 
-        "./server_2019/autounattend.xml",
+    floppy_files          = [
+        "./server/${var.server_version}/autounattend.xml",
         "./floppy/disable-network-discovery.cmd",
         "./floppy/disable-screensaver.ps1",
         "./floppy/disable-winrm.ps1",
@@ -157,10 +161,10 @@ source "vsphere-iso" "server2019"{
     password              = var.vsphere_password
     username              = var.vsphere_user
     vcenter_server        = var.vsphere_server
-    vm_name               = var.template
+    vm_name               = "${var.template}-${var.server_version}"
 }
 
-source "hyperv-iso" "server2019"{
+source "hyperv-iso" "server"{
 
     boot_wait                           = var.boot_wait
     communicator                        = var.communicator
@@ -169,7 +173,7 @@ source "hyperv-iso" "server2019"{
     enable_secure_boot                  = true
     enable_virtualization_extensions    = false
     floppy_files                        = [
-        "./server_2019/autounattend.xml",
+        "./server/${var.server_version}/autounattend.xml",
         "./floppy/disable-network-discovery.cmd",
         "./floppy/disable-screensaver.ps1",
         "./floppy/disable-winrm.ps1",
@@ -184,15 +188,15 @@ source "hyperv-iso" "server2019"{
     switch_name                         = var.hyperv_default_switch
     #                                   V2 doesnt support floppy drives
     generation                          = 1
-    vm_name                             = var.template
+    vm_name                             = "${var.template}-${var.server_version}"
     winrm_password                      = "packer"
     winrm_timeout                       = "2h"
     winrm_username                      = "packer"
-    output_directory                    = "${var.build_directory}/packer-${var.template}-hyperv"
+    output_directory                    = "${var.build_directory}/packer-${var.template}${var.server_version}-hyperv"
     headless                            = true
 }
 
-source "virtualbox-iso" "server2019"{
+source "virtualbox-iso" "server"{
     boot_wait                           = var.boot_wait
     communicator                        = var.communicator
     cpus                                = var.cpu
@@ -204,26 +208,21 @@ source "virtualbox-iso" "server2019"{
     iso_url                             = var.iso_dir
     memory                              = var.memory
     shutdown_command                    = var.windows_shutdown_command
-    vm_name                             = var.template
+    vm_name                             = "${var.template}${var.server_version}"
     winrm_password                      = "packer"
     winrm_timeout                       = "2h"
     winrm_username                      = "packer"
     floppy_dirs                         = [ "./floppy"]
-    floppy_files                        = [ "./server_2019/autounattend.xml" ]
-    output_directory                    = "${var.build_directory}/packer-${var.template}-virtualbox"
+    floppy_files                        = [ "./server/${var.server_version}/autounattend.xml" ]
+    output_directory                    = "${var.build_directory}/packer-${var.template}${var.server_version}-virtualbox"
 }
 
 build {
     sources = [
-        "source.hyperv-iso.server2019",
-        "source.vsphere-iso.server2019",
-        "source.virtualbox-iso.server2019"
+        "source.hyperv-iso.server",
+        "source.vsphere-iso.server",
+        "source.virtualbox-iso.server"
     ]
-
-    provisioner "windows-shell"{
-        scripts = ["./floppy/install-vm-tools.cmd"]
-        only = ["vsphere-iso"]
-    }
 
     provisioner "windows-shell" {
         execute_command                 = "{{ .Vars }} cmd /c \"{{ .Path }}\""

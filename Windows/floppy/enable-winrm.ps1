@@ -1,3 +1,4 @@
+Write-Output "##################### Starting WINRM Confuration and Enabling. #####################"
 $NetworkListManager = [Activator]::CreateInstance([Type]::GetTypeFromCLSID([Guid]"{DCB00C01-570F-4A9B-8D69-199FDBA5723B}"))
 $Connections = $NetworkListManager.GetNetworkConnections()
 $Connections | ForEach-Object { $_.GetNetwork().SetCategory(1) }
@@ -15,3 +16,4 @@ netsh advfirewall firewall set rule group="Windows Remote Administration" new en
 netsh advfirewall firewall set rule name="Windows Remote Management (HTTP-In)" new enable=yes action=allow
 Set-Service winrm -StartupType "auto"
 Restart-Service winrm
+Write-Output "##################### WinRM Enabled. #####################"

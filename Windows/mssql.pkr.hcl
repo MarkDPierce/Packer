@@ -1,32 +1,27 @@
 variable "template"{
     type    = string
-    default = "Server-2016"
+    default = "Server-2019"
 }
 variable "build_directory"{
     type    = string
     default = "../builds"
 }
-
 variable "boot_wait"{
     type    = string
-    default = "3s"
+    default = "60s"
 }
-
 variable "communicator"{
     type    = string
     default = "winrm"
 }
-
 variable "cpu"{
     type    = number
     default = 1
 }
-
 variable "memory"{
     type    = number
     default = 2048
 }
-
 variable "disk_size"{
     type    = number
     default = 120000
@@ -34,7 +29,7 @@ variable "disk_size"{
 
 variable "iso_check"{
     type    = string
-    default = "sha256:4CAEB24B661FCEDE81CD90661AEC31AA69753BF49A5AC247253DD021BC1B5CBB"
+    default = ""
 }
 
 variable "iso_dir"{
@@ -80,7 +75,7 @@ variable "vsphere_datastore"{
 
 variable "vsphere_folder"{
     type    = string
-    default = "Templates/Windows/server2016"
+    default = "Templates/Windows/server2019"
 }
 
 variable "vsphere_network"{
@@ -90,7 +85,7 @@ variable "vsphere_network"{
 
 variable "vsphere_iso"{
     type    = string
-    default = "[Software] ISO/Microsoft/Windows/ENG(English)/2016/en_windows_server_2016_x64_dvd_9327751.iso"
+    default = "[Software] ISO/Microsoft/Windows/ENG(English)/2019/en_windows_server_2019_x64_dvd_4cb967d8.iso"
 }
 
 variable "vsphere_password"{
@@ -112,43 +107,63 @@ variable "firmware"{
     type    = string
     default = "bios"
 }
+variable "builderip" {
+    type    = string
+    default = "127.0.0.1"
+}
+variable "sqlversion" {
+    type    = string
+    default = "2017"
+}
 
-source "vsphere-iso" "server2016"{
+variable "sql_iso" {
+    type    = string
+}
+
+
+source "vsphere-iso" "mssql"{
     boot_wait             = var.boot_wait
+    boot_command=[
+        "<enter>"
+    ]
     CPUs                  = var.cpu
     RAM                   = var.memory
-    RAM_reserve_all       = true
+    RAM_reserve_all       = false
     cluster               = var.vsphere_cluster
     communicator          = var.communicator
     winrm_username        = "packer"
     winrm_password        = "packer"
     winrm_timeout         = "2h"
-    firmware              = var.firmware
     shutdown_command      = var.windows_shutdown_command
     create_snapshot       = var.enable_snapshot
     convert_to_template   = var.convert_to_template
     datacenter            = var.vsphere_datacenter
     datastore             = var.vsphere_datastore
     disk_controller_type  = ["lsilogic-sas"]
+    firmware              = var.firmware
     storage {
         disk_size             = var.disk_size
         disk_thin_provisioned = true
     }
-    floppy_files          = [ 
-        "./server_2016/autounattend.xml",
+    floppy_files          = [
+        "./server/2019/autounattend.xml",
         "./floppy/disable-network-discovery.cmd",
         "./floppy/disable-screensaver.ps1",
         "./floppy/disable-winrm.ps1",
         "./floppy/enable-winrm.ps1",
         "./floppy/Server-Bootstrap.ps1",
-        "./floppy/install-vm-tools.cmd"
+        "./floppy/install-vm-tools.cmd",
+        "./mssql/${var.sqlversion}/configuration.ini",
+        "./mssql/scripts/install.ps1"
     ]
     folder                = var.vsphere_folder
     guest_os_type         = "windows9Server64Guest"
     insecure_connection   = "true"
     iso_paths             = [
         var.vsphere_iso,
-        "[] /vmimages/tools-isoimages/windows.iso"]
+        "[] /vmimages/tools-isoimages/windows.iso",
+        "[Software] ISO/Microsoft/SQL/${var.sqlversion}/mssql-${var.sqlversion}.iso"
+    ]
     network_adapters  {
         network               = var.vsphere_network
         network_card          = "vmxnet3"
@@ -157,10 +172,10 @@ source "vsphere-iso" "server2016"{
     password              = var.vsphere_password
     username              = var.vsphere_user
     vcenter_server        = var.vsphere_server
-    vm_name               = var.template
+    vm_name               = "${var.template}-${var.sqlversion}"
 }
 
-source "hyperv-iso" "server2016"{
+source "hyperv-iso" "mssql"{
 
     boot_wait                           = var.boot_wait
     communicator                        = var.communicator
@@ -168,58 +183,50 @@ source "hyperv-iso" "server2016"{
     disk_size                           = var.disk_size
     enable_secure_boot                  = true
     enable_virtualization_extensions    = false
-    floppy_dirs                         = [ "./floppy"]
-        floppy_files          = [ 
-        "./server_2016/autounattend.xml",
+    floppy_files                        = [
+        "./server/2019/autounattend.xml",
         "./floppy/disable-network-discovery.cmd",
         "./floppy/disable-screensaver.ps1",
         "./floppy/disable-winrm.ps1",
         "./floppy/enable-winrm.ps1",
-        "./floppy/Server-Bootstrap.ps1"
+        "./floppy/Server-Bootstrap.ps1",
+        "./mssql/${var.sqlversion}/configuration.ini",
+        "./mssql/scripts/install.ps1"
     ]
     guest_additions_mode                = "disable"
     iso_checksum                        = var.iso_check
-    iso_url                             = var.iso_dir
+    iso_urls                            = [
+        var.iso_dir
+    ]
+    http_directory                            = "${path.root}/scripts"
+    secondary_iso_images                = [
+        var.sql_iso
+    ]
     memory                              = var.memory
     shutdown_command                    = var.windows_shutdown_command
     switch_name                         = var.hyperv_default_switch
     #                                   V2 doesnt support floppy drives
     generation                          = 1
-    vm_name                             = var.template
+    vm_name                             = "${var.template}-${var.sqlversion}"
     winrm_password                      = "packer"
     winrm_timeout                       = "2h"
     winrm_username                      = "packer"
-    output_directory                    = "${var.build_directory}/packer-${var.template}-hyperv"
+    output_directory                    = "${var.build_directory}/packer-${var.template}-${var.sqlversion}-hyperv"
     headless                            = true
 }
 
-source "virtualbox-iso" "server2016"{
-    boot_wait                           = var.boot_wait
-    communicator                        = var.communicator
-    cpus                                = var.cpu
-    disk_size                           = var.disk_size
-    guest_additions_mode                = "disable"
-    guest_os_type                       = "Windows2016_64"
-    headless                            = true
-    iso_checksum                        = var.iso_check
-    iso_url                             = var.iso_dir
-    memory                              = var.memory
-    shutdown_command                    = var.windows_shutdown_command
-    vm_name                             = var.template
-    winrm_password                      = "packer"
-    winrm_timeout                       = "2h"
-    winrm_username                      = "packer"
-    floppy_dirs                         = [ "./floppy"]
-    floppy_files                        = [ "./server_2016/autounattend.xml" ]
-    output_directory                    = "${var.build_directory}/packer-${var.template}-virtualbox"
-}
 
 build {
     sources = [
-        "source.hyperv-iso.server2016",
-        "source.vsphere-iso.server2016",
-        "source.virtualbox-iso.server2016"
+        "source.hyperv-iso.mssql",
+        "source.vsphere-iso.mssql"
     ]
+
+    provisioner "windows-shell"{
+        scripts = ["./floppy/install-vm-tools.cmd"]
+        only = ["vsphere-iso"]
+    }
+
     provisioner "windows-shell" {
         execute_command                 = "{{ .Vars }} cmd /c \"{{ .Path }}\""
         scripts                         = [
@@ -228,19 +235,13 @@ build {
     }
 
     provisioner "powershell"{
-        scripts = [
-            "./scripts/install-choco.ps1",
-            "./scripts/install-powershellmodules.ps1"
+        inline = [
+            "set-location 'a:\\' ",
+            ".\\install.ps1"
         ]
     }
 
     provisioner "windows-restart"{
         restart_timeout                 = "5m"
-    }
-
-    provisioner "powershell"{
-        scripts = [
-            "./scripts/install-chocopacks.ps1"
-        ]
     }
 }
