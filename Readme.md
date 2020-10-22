@@ -193,4 +193,4 @@ ___
 ## 📱 Troubleshooting
 ___
 
-Its an emojii. Dont call me. I'll update this ASAP
+Todo: Add troubleshooting section.
